@@ -2,8 +2,15 @@ import argparse
 
 import numpy as np
 
-def parse_args():
-    parser = argparse.ArgumentParser()
+def add_general_arguments(parser):
+    parser.add_argument(
+        "-d", "--debug",
+        help="Display debug info.",
+        action="store_true",
+        default=False
+    )
+
+def add_classifier_arguments(parser):
     parser.add_argument(
         "-t", "--threshold",
         help="Minimum confidence threshold for object detection.",
@@ -14,12 +21,6 @@ def parse_args():
         help="Desired webcam resolution in WxH."
             "Webcam paired with non-supported resolutions may cause errors.",
         default="1280x720"
-    )
-    parser.add_argument(
-        "-d", "--debug",
-        help="Display debug info.",
-        action="store_true",
-        default=False
     )
     parser.add_argument(
         "-0", "--color0",
@@ -36,9 +37,8 @@ def parse_args():
         help="Color for class 2 in 'R,G,B' format.",
         default="0,0,255"
     )
-    
-    args = parser.parse_args()
 
+def parse_classifier_arguments(args):
     args.threshold = float(args.threshold)
 
     width_str, height_str = args.resolution.split("x")
@@ -53,4 +53,10 @@ def parse_args():
     r2_str, g2_str, b2_str = args.color2.split(",")
     args.color2 = np.array((int(b2_str), int(g2_str), int(r2_str)))
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    add_general_arguments(parser)
+    add_classifier_arguments(parser)
+    args = parser.parse_args()
+    parse_classifier_arguments(args)
     return args
