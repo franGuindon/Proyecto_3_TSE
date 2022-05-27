@@ -3,9 +3,11 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD)
 
 class Pin:
-    def __init__(self, pin_number): GPIO.setup(pin_number, GPIO.OUT)
-    def high(self): GPIO.output(led, GPIO.HIGH)
-    def low(self): GPIO.output(led, GPIO.LOW)
+    def __init__(self, pin_number):
+        self.pin_number = pin_number
+        GPIO.setup(pin_number, GPIO.OUT)
+    def high(self): GPIO.output(self.pin_number, GPIO.HIGH)
+    def low(self): GPIO.output(self.pin_number, GPIO.LOW)
 
 def cleanup(): GPIO.cleanup()
 
