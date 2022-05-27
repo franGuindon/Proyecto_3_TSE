@@ -2,10 +2,6 @@ import cv2
 import numpy as np
 from tflite_runtime.interpreter import Interpreter
 
-from arg_parser import parse_args
-
-ARGS = parse_args()
-
 MODEL_FILE = "detect.tflite"
 
 INTERPRETER = Interpreter(model_path=MODEL_FILE)
@@ -23,8 +19,12 @@ FLOATING_MODEL = (INPUT_DETAILS['dtype'] == np.float32)
 
 CAMERA = cv2.VideoCapture(0)
 CAMERA.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))
-CAMERA.set(cv2.CAP_PROP_FRAME_WIDTH, ARGS.width)
-CAMERA.set(cv2.CAP_PROP_FRAME_HEIGHT, ARGS.height)
+
+def setup(args):
+    global ARGS
+    ARGS = args
+    CAMERA.set(cv2.CAP_PROP_FRAME_WIDTH, ARGS.width)
+    CAMERA.set(cv2.CAP_PROP_FRAME_HEIGHT, ARGS.height)
 
 def get_boxes_and_scores(frame):
     frame_copy = frame.copy()
@@ -106,10 +106,13 @@ def continuosly_classify_object():
     grabbed = True
     while grabbed: grabbed, _ = try_classify_object()
 
-def clean_up():
+def cleanup():
     cv2.destroyAllWindows()
     CAMERA.release()
 
 if __name__ == "__main__":
+    from arg_parser import parse_args
+    args = parse_args()
+    setup(args)
     continuosly_classify_object()
-    clean_up()
+    cleanup()
