@@ -79,7 +79,7 @@ parser.add_argument('--resolution', help='Desired webcam resolution in WxH. If t
                     default='1280x720')
 parser.add_argument('--edgetpu', help='Use Coral Edge TPU Accelerator to speed up detection',
                     action='store_true')
-
+                    
 args = parser.parse_args()
 
 MODEL_NAME = args.modeldir
@@ -94,6 +94,7 @@ use_TPU = args.edgetpu
 # If tflite_runtime is installed, import interpreter from tflite_runtime, else import from regular tensorflow
 # If using Coral Edge TPU, import the load_delegate library
 pkg = importlib.util.find_spec('tflite_runtime')
+breakpoint()
 if pkg:
     from tflite_runtime.interpreter import Interpreter
     if use_TPU:
@@ -175,6 +176,9 @@ while True:
 
     # Grab frame from video stream
     frame1 = videostream.read()
+    if not videostream.grabbed:
+        print("grabbed")
+        continue
 
     # Acquire frame and resize to expected shape [1xHxWx3]
     frame = frame1.copy()
@@ -208,14 +212,15 @@ while True:
             xmax = int(min(imW,(boxes[i][3] * imW)))
             area = (xmax-xmin)*(ymax-ymin)
             
-            max_area, *_ = max_area_and_id
-            max_area_and_id = (area, i, ymin, xmin, ymax, xmax) if area > max_area else max_area_and_id
+            max_area, *_ = max_area_id_dims
+            max_area_id_dims = (area, i, ymin, xmin, ymax, xmax) if area > max_area else max_area_id_dims
     
-    _, i = max_area_and_id
-    cv2.rectangle(frame, (xmin,ymin), (xmax,ymax), (10, 255, 0), 2)
+    _, i, ymin, xmin, ymax, xmax = max_area_id_dims
+    
     cropped_object = frame[ymin:ymax, xmin:xmax]
     average_color = np.average(cropped_object, axis=(0,1))
-    
+    cv2.rectangle(frame, (xmin,ymin), (xmax,ymax), average_color, cv2.FILLED)
+    """
     print(average_color, area)
 
     # Draw label
@@ -228,10 +233,10 @@ while True:
 
     # Draw framerate in corner of frame
     cv2.putText(frame,'FPS: {0:.2f}'.format(frame_rate_calc),(30,50),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,0),2,cv2.LINE_AA)
-
+    """
     # All the results have been drawn on the frame, so it's time to display it.
     cv2.imshow('Object detector', frame)
-
+    
     # Calculate framerate
     t2 = cv2.getTickCount()
     time1 = (t2-t1)/freq
