@@ -53,10 +53,28 @@ def parse_classifier_arguments(args):
     r2_str, g2_str, b2_str = args.color2.split(",")
     args.color2 = np.array((int(b2_str), int(g2_str), int(r2_str)))
 
+def add_belt_arguments(parser):
+    parser.add_argument(
+        "-v", "--velocity",
+        help="Minimum confidence threshold for object detection.",
+        default=0.001
+    )
+    parser.add_argument(
+        "-s", "--step_count",
+        help="Minimum confidence threshold for object detection.",
+        default=100
+    )
+
+def parse_belt_arguments(args):
+    args.velocity = float(args.velocity)
+    args.step_count = int(args.step_count)
+
 def parse_args():
     parser = argparse.ArgumentParser()
     add_general_arguments(parser)
     add_classifier_arguments(parser)
+    add_belt_arguments(parser)
     args = parser.parse_args()
     parse_classifier_arguments(args)
+    parse_belt_arguments(args)
     return args
