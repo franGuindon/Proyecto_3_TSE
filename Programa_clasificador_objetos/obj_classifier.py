@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from tflite_runtime.interpreter import Interpreter
+from ternsorflow.interpreter import Interpreter
 
 MODEL_FILE = "detect.tflite"
 
