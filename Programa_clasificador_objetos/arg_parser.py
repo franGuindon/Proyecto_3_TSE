@@ -9,6 +9,11 @@ def add_general_arguments(parser):
         action="store_true",
         default=False
     )
+    parser.add_argument(
+        "--dir_pal",
+        help="Dirección paleta",
+        default=1
+    )
 
 def add_classifier_arguments(parser):
     parser.add_argument(
@@ -37,6 +42,9 @@ def add_classifier_arguments(parser):
         help="Color for class 2 in 'R,G,B' format.",
         default="0,0,255"
     )
+
+def parse_general_arguments(args):
+    args.dir_pal = int(args.dir_pal)
 
 def parse_classifier_arguments(args):
     args.threshold = float(args.threshold)
