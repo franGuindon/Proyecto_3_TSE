@@ -1,3 +1,4 @@
+from re import M
 from time import sleep
 import RPi.GPIO as GPIO
 from arg_parser import parse_args
@@ -28,6 +29,12 @@ def paleta(direccion):
     GPIO.setup(estado,GPIO.IN)
     p=GPIO.PWM(enable,100)
     p.start(100)
+
+    for _ in range(10):
+        dir_clk(Motor1A, Motor1B)
+        sleep(0.1)
+
+    """
     print("Before while", GPIO.input(estado))
     
     if direccion == 1:
@@ -71,6 +78,7 @@ def paleta(direccion):
             GPIO.output(Motor1B,GPIO.LOW)
             sleep(0.01)
     if direccion == 3: pass
+    """
     GPIO.cleanup()
 
 if __name__ == "__main__":
