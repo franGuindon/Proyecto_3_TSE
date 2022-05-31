@@ -36,10 +36,7 @@ def paleta(direccion):
             GPIO.output(Motor1A,GPIO.LOW)
             GPIO.output(Motor1B,GPIO.HIGH)
             sleep(0.3)
-    if direccion == 3:
-        GPIO.cleanup()
-
-    GPIO.cleanup()
+    if direccion == 3: pass
 
 if __name__ == "__main__":
     from arg_parser import parse_args

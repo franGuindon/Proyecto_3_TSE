@@ -14,6 +14,15 @@ def add_general_arguments(parser):
         help="Dirección paleta",
         default=1
     )
+    parser.add_argument(
+        "--class_count",
+        help="Number of times frame is tested for color",
+        default=10
+    )
+
+def parse_general_arguments(args):
+    args.dir_pal = int(args.dir_pal)
+    args.class_count = int(args.class_count)
 
 def add_classifier_arguments(parser):
     parser.add_argument(
@@ -43,9 +52,6 @@ def add_classifier_arguments(parser):
         default="0,0,255"
     )
 
-def parse_general_arguments(args):
-    args.dir_pal = int(args.dir_pal)
-
 def parse_classifier_arguments(args):
     args.threshold = float(args.threshold)
 
@@ -72,10 +78,22 @@ def add_belt_arguments(parser):
         help="Minimum confidence threshold for object detection.",
         default=100
     )
+    parser.add_argument(
+        "--step0",
+        help="Steps before cam",
+        default=100
+    )
+    parser.add_argument(
+        "--step1",
+        help="Steps between cam and arm",
+        default=100
+    )
 
 def parse_belt_arguments(args):
     args.velocity = float(args.velocity)
     args.step_count = int(args.step_count)
+    args.step0 = int(args.step0)
+    args.step1 = int(args.step1)
 
 def parse_args():
     parser = argparse.ArgumentParser()

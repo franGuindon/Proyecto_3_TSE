@@ -24,6 +24,8 @@ print("Setting up video capture")
 CAMERA = cv2.VideoCapture(0)
 print("Setting up video format to MJPG")
 CAMERA.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*"MJPG"))
+CAM_HEIGHT = CAMERA.get(cv2.CAP_PROP_FRAME_HEIGHT)
+CAM_WIDTH = CAMERA.get(cv2.CAP_PROP_FRAME_WIDTH)
 
 def setup(args):
     global ARGS
@@ -69,9 +71,11 @@ def get_obj_class(color):
     dist0 = np.linalg.norm(color - ARGS.color0)
     dist1 = np.linalg.norm(color - ARGS.color1)
     dist2 = np.linalg.norm(color - ARGS.color2)
-    dists = list(enumerate((dist0, dist1, dist2)))
+    dist3 = np.linalg.norm(color - np.array([208, 207, 212]))
+    dists = list(enumerate((dist0, dist1, dist2, dist3)))
     dists.sort(key=lambda element: element[1])
     obj_class, _ = dists[0]
+    if obj_class == 3: obj_class = 2
     return obj_class
 
 def show_avg_color_box(frame, top_left, bot_right, avg_color):
@@ -79,10 +83,14 @@ def show_avg_color_box(frame, top_left, bot_right, avg_color):
     cv2.imshow('Debug window', frame)
 
 def show_class_and_score(frame, top_left, bot_right, obj_class, score):
-    print("showing class and score")
     cv2.rectangle(frame, top_left, bot_right, (10, 255, 0), 2)
     label = f"Class: {obj_class}, Score: {score*100:.0f}"
     cv2.putText(frame, label, top_left, cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+    cv2.imshow('Debug window', frame)
+
+def show_class(frame, obj_class):
+    label = f"Class: {obj_class}"
+    cv2.putText(frame, label, (int(CAM_HEIGHT*0.5),int(CAM_WIDTH*0.5)), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
     cv2.imshow('Debug window', frame)
 
 def grab_fame():
@@ -95,24 +103,23 @@ def grab_fame():
     CAMERA.release()
 
 def try_classify_object():
-    print("grabbing frame")
     grabbed, frame = CAMERA.read()
-    if not grabbed: return False, None
-    print("getting obj boxes and scores")
+    if not grabbed: return False, Nonep
     """
     boxes, scores = get_boxes_and_scores(frame)
     (ymin, xmin, ymax, xmax), score = get_main_dims_and_score(boxes, scores)
     if not (ymin or xmin or ymax or xmax): return False, None
+    """
     print("cropping img")
+    ymin, ymax, xmin, xmax = int((0.5 - 0.1)*CAM_HEIGHT), int((0.5 + 0.1)*CAM_HEIGHT), int((0.5 - 0.1)*CAM_WIDTH), int((0.5 + 0.1)*CAM_WIDTH)
     frame_cropped = frame[ymin:ymax, xmin:xmax]
     avg_color = np.average(frame_cropped, axis=(0,1))
-    """
-    avg_color = np.average(frame, axis=(0,1))
     obj_class = get_obj_class(avg_color)
-    print("running debug code")
+    
     if ARGS.debug:
         #show_avg_color_box(frame, (xmin, ymin), (xmax, ymax), avg_color)
         #show_class_and_score(frame, (xmin, ymin), (xmax, ymax), obj_class, score)
+        show_class(frame, obj_class)
         cv2.imshow("", frame)
         if cv2.waitKey(1) == ord('q'): return False, "break"
     return True, obj_class
@@ -121,7 +128,7 @@ def classify_object(attempts):
     array = []
     while len(array) < attempts:
         grabbed, obj_class = try_classify_object()
-        if grabbed: array.append[obj_class]
+        if grabbed: array.append(obj_class)
     obj_class = np.average(array)
     return int(round(obj_class, 0))
 
