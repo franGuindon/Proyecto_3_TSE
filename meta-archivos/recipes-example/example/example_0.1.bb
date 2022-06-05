@@ -4,10 +4,11 @@
 LICENSE = "CLOSED"
 LIC_FILES_CHKSUM = ""
 
-SRC_URI = "file://Detector_de_emociones.py \ 
-	   file://model.tflite \
-	   file://model_optimized.tflite \
-	   file://haarcascade_frontalface_default.xml "
+SRC_URI = "file://arg_parser.py \
+	   file://detect.tflite \
+      file://main.py \
+      file://obj_classifier.py \
+	   file://gpio.py "
 
 S = "${WORKDIR}"
 
@@ -18,10 +19,11 @@ TARGET_CC_ARCH += "${LDFLAGS}"
 
 
 do_install () {
-   install -d ${D}${bindir}/DETECTOR
-   install -m 0755 Detector_de_emociones.py ${D}${bindir}/DETECTOR
-   install -m 0755 model.tflite ${D}${bindir}/DETECTOR
-   install -m 0755 model_optimized.tflite ${D}${bindir}/DETECTOR
-   install -m 0755 haarcascade_frontalface_default.xml ${D}${bindir}/DETECTOR
+   install -d ${D}${bindir}/BANDA
+   install -m 0755 arg_parser.py ${D}${bindir}/BANDA
+   install -m 0755 detect.tflite ${D}${bindir}/BANDA
+   install -m 0755 main.py ${D}${bindir}/BANDA
+   install -m 0755 obj_classifier.py ${D}${bindir}/BANDA
+   install -m 0755 gpio.py ${D}${bindir}/BANDA
 }
 
