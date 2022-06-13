@@ -104,7 +104,7 @@ def grab_fame():
 
 def try_classify_object():
     grabbed, frame = CAMERA.read()
-    if not grabbed: return False, Nonep
+    if not grabbed: return False, None
     """
     boxes, scores = get_boxes_and_scores(frame)
     (ymin, xmin, ymax, xmax), score = get_main_dims_and_score(boxes, scores)
