@@ -49,11 +49,11 @@
 8. Cuando haya iniciado se debe ir al siguiente directorio:
 
         $ cd // 
-        $ cd usr/bin/DETECCION 
+        $ cd usr/bin/BANDA 
         
 - y Ejecutar el siguiente comando:
 
-        python3 Deteccion_de_emociones.py
+        python3 main.py
 
 #### Hasta aqui la aplicaion esta corriedo de manera local, para hacerlo de manera remota se deben seguir los siguientes pasos:
 
